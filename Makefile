@@ -1,6 +1,6 @@
 cc = gcc
 bin = prime
-CFLAGS = -O2 -Werror -Wall -ansi
+CFLAGS =  -O2  -ansi -pedantic -Wall -Werror
 
 all:	$(bin)
 
