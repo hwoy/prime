@@ -2,6 +2,8 @@ cc = gcc
 bin = prime
 CFLAGS =  -O2  -ansi -pedantic -Wall -Werror
 
+.PHONY: all clean
+
 all:	$(bin)
 
 $(bin):	main.o prime.o
