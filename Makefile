@@ -1,5 +1,5 @@
 cc = gcc
-bin = prime
+bin = prime.exe
 CFLAGS =  -O2  -ansi -pedantic -Wall -Werror
 
 .PHONY: all clean
@@ -13,5 +13,4 @@ main.o:
 prime.o:
 	$(cc) -c -o prime.o $(CFLAGS) prime.c
 clean:
-	rm -rf main.o prime.o $(bin) *~
-
+	del main.o prime.o $(bin) *~
