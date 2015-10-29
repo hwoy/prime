@@ -1,4 +1,4 @@
-cc = gcc
+cc = $(CC)
 bin = prime
 CFLAGS =  -O2  -ansi -Wpedantic -Wall -Werror
 
