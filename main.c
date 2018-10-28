@@ -4,63 +4,113 @@
 #include "function.h"
 #include "opt.h"
 
-#define DEFAULT_MIN 1
+#define DMIN 1
+#define DCOL 1
 
-static int showHelp(const char* ch, int ret);
+#define BSIZE 64
+
+static int showHelp(const char* ch, int ret,const char *opt[] ,const char *optstr[]);
 static const char* cropPath(const char* ch);
 static void printErr(const char* str[], int i);
 
 static const char* errStr[] = { "Parameter is not match.",
     "Min > Max.",
-    "One of parameter is not an unsigned number." };
+    "One of parameter is not an unsigned number.",
+    "COL must not be zero",
+    "Number of Min or Max doesn't match",
+    NULL};
 
 enum {
     e_parNmatch,
     e_mOm,
-    e_parNnum
+    e_parNnum,
+    e_col,
+    e_dcount
+};
+
+static const char* opt[] = { "-c:", NULL };
+static const char* optstr[] = { "Number of Column", NULL };
+
+enum {
+	opt_c
 };
 
 int main(int argc, const char* argv[])
 {
-    unsigned int min, max, i, count;
+    unsigned int min=DMIN, max=DMIN, num, count, COL=DCOL, col,dcount;
 
-    /*********	Paramer management	***********/
+ {
+        static char buff[BSIZE];
+        int index;
+        unsigned int ui_cindex;
 
-    switch (argc) {
-    case 2:
-        min = DEFAULT_MIN;
-        if (!isUint(argv[1])) {
-            printErr(errStr, e_parNnum);
-            return showHelp(argv[0], 1);
+        if(argc <2)
+        {
+            printErr(errStr, e_parNmatch);
+            return showHelp(argv[0], 1 , opt, optstr);       
         }
-        max = s2ui(argv[1]);
 
-        break;
-    case 3:
+        for (ui_cindex = DSTART,dcount=0; (index = opt_action(argc, argv, opt, buff,BSIZE, DSTART)) != e_optend; ui_cindex++)
+        {
 
-        if (!isUint(argv[1]) || !isUint(argv[2])) {
-            printErr(errStr, e_parNnum);
-            return showHelp(argv[0], 1);
+            switch (index) 
+            {
+
+                case opt_c:
+
+                    if (!isUint(buff)) {
+                        printErr(errStr, e_parNnum);
+                        return showHelp(argv[0], 1, opt, optstr);
+                    }
+
+                    COL = s2ui(buff);
+
+                	break;
+                
+                default:
+                    if (!isUint(buff)) {
+                        printErr(errStr, e_parNnum);
+                        return showHelp(argv[0], 1, opt, optstr);
+                    }
+
+                    if(dcount++)
+                        min = max;
+                    
+                    max = s2ui(buff);
+
+                    break;
+                    
+            }
         }
-        min = s2ui(argv[1]);
-        max = s2ui(argv[2]);
-        break;
+ }
 
-    default:
-        printErr(errStr, e_parNmatch);
-        return showHelp(argv[0], 1);
+    if (!COL) {
+        printErr(errStr, e_col);
+        return showHelp(argv[0], 1, opt, optstr);
     }
 
     if (min > max) {
         printErr(errStr, e_mOm);
-        return showHelp(argv[0], 1);
+        return showHelp(argv[0], 1, opt, optstr);
     }
-    /*********	Paramer management	***********/
 
-    for (i = min, count = 0; i <= max; i++) {
-        if (isPrime(i)) {
-            printf("%u\n", i);
+    if(dcount<1 || dcount>2)
+    {
+         printErr(errStr, e_dcount);
+        return showHelp(argv[0], 1, opt, optstr);       
+    }
+
+
+
+
+    for (num = min, count = 0, col = 0; num <= max; ++num) {
+        if (isPrime(num)) {
+            printf("%u \t", num);
+            
             count++;
+
+            if(!(col=(col+1)%COL))
+                putchar('\n');
         }
     }
 
@@ -70,21 +120,27 @@ int main(int argc, const char* argv[])
 
 /*********	End of main function	***********/
 
-static int
-showHelp(const char* ch, int ret)
+static int showHelp(const char* ch, int ret,const char *opt[] ,const char *optstr[])
 {
-
+    unsigned int i;
     const char* crop = cropPath(ch);
 
     fprintf(stderr,
         "\n%s is an utility that can generate prime numbers.\n\n",
         crop);
     fprintf(stderr,
-        "USAGE:\t%s number\nProgram generates prime numbers between %u to number.\n\n",
-        crop, DEFAULT_MIN);
+        "USAGE:\t%s [option] number\nProgram generates prime numbers between %u to number.\n\n",
+        crop, DMIN);
     fprintf(stderr,
-        "USAGE:\t%s min max\nProgram generates prime numbers between min to max.\n\n",
+        "USAGE:\t%s [option] min max\nProgram generates prime numbers between min to max.\n\n",
         crop);
+
+    fprintf(stderr,"Options\n\n");
+
+    for(i=0;opt[i] && optstr[i];++i)
+        fprintf(stderr,"%s \t=> \t %s\n",opt[i],optstr[i]);
+
+
 
     return ret;
 }
