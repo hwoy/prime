@@ -1,5 +1,5 @@
 # prime
-- prime is a program that can generate prime numbers.
+- prime is a program that can brutely force generate prime numbers.
 - Written in C90
 
 ### Example
@@ -30,7 +30,7 @@ $ prime -c:10 1000
 
 ```
 
-### Contact me. 
+### Contact me
 - Web: https://github.com/hwoy 
 - Email: zaintcorp@yahoo.com 
 - Facebook: http://www.facebook.com/dead-root 
