@@ -114,7 +114,7 @@ int main(int argc, const char* argv[])
         }
     }
 
-    printf("\n%u to %u have %u\n", min, max, count);
+    printf("\n\n%u to %u have %u\n", min, max, count);
     return 0;
 }
 
@@ -135,11 +135,13 @@ static int showHelp(const char* ch, int ret,const char *opt[] ,const char *optst
         "USAGE:\t%s [option] min max\nProgram generates prime numbers between min to max.\n\n",
         crop);
 
-    fprintf(stderr,"Options\n\n");
+    fprintf(stderr,"Options:\n\n");
 
     for(i=0;opt[i] && optstr[i];++i)
         fprintf(stderr,"%s \t=> \t %s\n",opt[i],optstr[i]);
 
+    fprintf(stderr,"\nExample:\n");
+    fprintf(stderr,"%s %s10 1000\n\n",crop,opt[0]);
 
 
     return ret;
